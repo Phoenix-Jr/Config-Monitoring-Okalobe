@@ -32,7 +32,7 @@ project-directory/
    Si vous n'avez pas encore le projet sur votre machine, clonez-le à partir de son dépôt source.
 
    ```bash
-   git clone <url_du_dépôt>
+   git clone https://github.com/Phoenix-Jr/Config-Monitoring-Okalobe.git
    cd project-directory
    ```
 
