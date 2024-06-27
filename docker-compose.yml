@@ -1,0 +1,51 @@
+version: "3"
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./containers/prometheus/:/prometheus
+      - ./containers/prometheus_config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./containers/prometheus_config/myrules.yml:/etc/prometheus/myrules.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./containers/grafana:/var/lib/grafana
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    depends_on:
+      - prometheus
+    ports:
+      - "9093:9093"
+    command: --config.file=/config/alertmanager.yml --log.level=debug
+    volumes:
+      - ./containers/alertmanager_data:/data
+      - ./containers/alertmanager_config:/config
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter
+    container_name: blackbox
+    depends_on:
+      - prometheus
+    ports:
+      - "9115:9115"
+    command:
+      - "--config.file=/etc/blackbox-exporter/config.yml"
+    volumes:
+      - ./containers/blackbox/blackbox.yml:/etc/blackbox-exporter/config.yml

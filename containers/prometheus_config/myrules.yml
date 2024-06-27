@@ -1,0 +1,14 @@
+groups:
+  - name: my-rules
+    rules:
+      # - alert: BlackboxTargetDown
+      #   expr: up{job='blackbox', instance="https://8b785262244d54ee92.gradio.live/"} == 0
+
+      - alert: BlackboxTargetDown
+        expr: probe_success == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Blackbox target {{ $labels.instance }} is down"
+          description: "The blackbox target {{ $labels.instance }} has been unreachable for more than 1 minute."
